@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.optimize import fsolve
 
-from code.orbital_state import OrbitalState
+from orbital_viz.orbital_state import OrbitalState
 
 deg2rad = np.pi / 180
 

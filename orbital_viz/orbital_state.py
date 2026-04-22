@@ -4,7 +4,7 @@ from typing import Optional, Union
 import numpy as np
 import numpy.typing as npt
 
-from code.constants import deg2rad, mu_sun, to_days
+from orbital_viz.constants import deg2rad, mu_sun, to_days
 
 Vector3 = npt.NDArray[np.float64]
 

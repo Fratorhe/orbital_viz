@@ -1,6 +1,6 @@
 import numpy as np
 
-from code.orbital_state import OrbitalState
+from orbital_viz.orbital_state import OrbitalState
 
 
 def _is_angle_close(angle: float, target: float, tol: float = 1e-6) -> bool:

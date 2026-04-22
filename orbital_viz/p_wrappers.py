@@ -1,15 +1,15 @@
 from matplotlib.lines import Line2D
 
-from code.p_central_body import plot_central_body
-from code.p_orbit import plot_orbit
-from code.p_plot_plane import plot_orbital_plane
-from code.p_position_velocity_vectors import (
+from orbital_viz.p_central_body import plot_central_body
+from orbital_viz.p_orbit import plot_orbit
+from orbital_viz.p_plot_plane import plot_orbital_plane
+from orbital_viz.p_position_velocity_vectors import (
     plot_position,
     plot_position_vector,
     plot_velocity_components,
     plot_velocity_vector,
 )
-from code.p_utils import add_legend_entry
+from orbital_viz.p_utils import add_legend_entry
 
 
 def plot_orbit_scene(

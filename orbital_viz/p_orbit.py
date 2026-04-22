@@ -1,6 +1,6 @@
 import numpy as np
 
-from code.orbital_state import OrbitalState
+from orbital_viz.orbital_state import OrbitalState
 
 
 def plot_orbit(
