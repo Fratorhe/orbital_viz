@@ -1,6 +1,6 @@
 import numpy as np
 
-from orbital_viz.p_utils import add_legend_entry  # your helper
+from orbital_viz.plt.p_utils import add_legend_entry  # your helper
 
 
 def plot_delta_v_hohmann(

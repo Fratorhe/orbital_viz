@@ -288,29 +288,39 @@ class OrbitalState:
             For elliptical orbits:
                 p1 = apoapsis point
                 p2 = periapsis point
-            Returns None if the eccentricity vector is undefined.
         """
         self.ensure_elements()
 
-        if self.e is None or self.a is None or self.e_vec is None:
+        if self.a is None or self.e is None:
             return None
 
-        e_vec = np.asarray(self.e_vec, dtype=float)
-        e_norm = np.linalg.norm(e_vec)
+        # Build periapsis direction from the state at theta = 0
+        temp = self.copy()
+        temp.theta = 0.0
+        temp.compute_state_vectors(update=True)
 
-        if e_norm < 1e-10:
+        r_peri_vec = np.asarray(temp.r_vec, dtype=float)
+        r_peri = np.linalg.norm(r_peri_vec)
+
+        if r_peri < 1e-12:
             return None
 
-        e_hat = e_vec / e_norm
+        e_hat = r_peri_vec / r_peri
 
         if self.e < 1:
-            r_p = self.a * (1 - self.e)
-            r_a = self.a * (1 + self.e)
+            r_p = self.r_p
+            r_a = self.r_a
 
-            p1 = -r_a * e_hat
-            p2 = r_p * e_hat
+            if r_p is None or r_a is None:
+                return None
+
+            p1 = -r_a * e_hat  # apoapsis
+            p2 = r_p * e_hat  # periapsis
         else:
-            r_p = self.a * (1 - self.e)
+            r_p = self.r_p
+            if r_p is None:
+                return None
+
             p1 = -2 * abs(self.a) * e_hat
             p2 = r_p * e_hat
 
