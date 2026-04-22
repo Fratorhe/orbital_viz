@@ -1,0 +1,15 @@
+[project]
+name = "orbital-viz"
+version = "0.1.0"
+description = "Orbital mechanics visualization and transfer tools"
+authors = [
+    { name = "Francisco Torres Herrador" }
+]
+dependencies = [
+    "numpy",
+    "matplotlib"
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
