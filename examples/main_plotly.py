@@ -4,6 +4,12 @@ from orbital_viz.constants import deg2rad, mu_earth
 from orbital_viz.orbital_state import OrbitalState
 from orbital_viz.plotly.p_central_body import plot_central_body
 from orbital_viz.plotly.p_orbit import plot_orbit
+from orbital_viz.plotly.p_plot_plane import plot_orbital_plane
+from orbital_viz.plotly.p_position_velocity_vectors import (
+    plot_current_state,
+    plot_velocity_components,
+)
+from orbital_viz.plotly.p_utils import show_figure
 
 orbital_object = OrbitalState(
     a=13000,
@@ -27,15 +33,17 @@ plot_orbit(
     linewidth=6,
     ls="--",
     show_apses=True,
-    show_direction=False,
+    show_direction=True,
 )
+plot_orbital_plane(fig, orbital_object, color="red")
+
 
 orbital_object = OrbitalState(
     a=18000,
     e=0.4,
     i=45 * deg2rad,
     Omega=0 * deg2rad,
-    omega=35 * deg2rad,
+    omega=152 * deg2rad,
     theta=20 * deg2rad,
     mu=mu_earth,
 )
@@ -47,17 +55,19 @@ plot_orbit(
     linewidth=6,
     ls="--",
     show_apses=True,
-    show_direction=False,
+    show_direction=True,
 )
 
-fig.update_layout(
-    scene=dict(
-        xaxis_title="x [km]",
-        yaxis_title="y [km]",
-        zaxis_title="z [km]",
-        aspectmode="data",
-    ),
-    margin=dict(l=0, r=0, b=0, t=0),
+plot_orbital_plane(fig, orbital_object, color="blue")
+
+plot_current_state(
+    fig,
+    orbital_object,
 )
 
-fig.show()
+plot_velocity_components(fig, orbital_object)
+
+show_figure(fig)
+plot_velocity_components(fig, orbital_object)
+
+show_figure(fig)

@@ -1,12 +1,7 @@
 import numpy as np
 import plotly.graph_objects as go
 
-_MPL_TO_PLOTLY_DASH = {
-    "-": "solid",
-    "--": "dash",
-    "-.": "dashdot",
-    ":": "dot",
-}
+from orbital_viz.plotly.p_utils import _MPL_TO_PLOTLY_DASH, plot_vector
 
 
 def plot_orbit(
@@ -18,6 +13,7 @@ def plot_orbit(
     ls="--",
     show_apses=False,
     show_direction=True,
+    show_current_location=False,
     **kwargs,
 ):
     """
@@ -84,7 +80,7 @@ def plot_orbit(
     y = r_points[:, 1]
     z = r_points[:, 2]
 
-    orbit_color = kwargs.get("color", None)
+    orbit_color = kwargs.get("color", "royalblue")
     orbit_lw = kwargs.get("linewidth", 2)
     dash_style = _MPL_TO_PLOTLY_DASH.get(ls, "solid")
 
@@ -111,7 +107,6 @@ def plot_orbit(
     # --- Line of apses ---
     if show_apses:
         apses_points = orbit_state.get_apses_line_points()
-        print(apses_points)
 
         if apses_points is not None:
             p1, p2 = apses_points
@@ -133,6 +128,33 @@ def plot_orbit(
             fig.add_trace(apses_trace)
             artists["apses"] = apses_trace
 
+    # --- Current theta location ---s
+    if show_current_location:
+        if orbit_state.theta is not None:
+            current_state = orbit_state.copy()
+            current_state.compute_state_vectors()
+            r_now = np.asarray(current_state.r_vec, dtype=float)
+
+            orbit_scale = np.max(np.linalg.norm(r_points, axis=1))
+            marker_size = float(np.clip(0.005 * orbit_scale, 3, 8))
+
+            current_trace = go.Scatter3d(
+                x=[r_now[0]],
+                y=[r_now[1]],
+                z=[r_now[2]],
+                mode="markers",
+                marker=dict(
+                    size=marker_size,
+                    color=orbit_color,
+                    opacity=min(1.0, alpha + 0.2),
+                    line=dict(color="black", width=1),
+                ),
+                showlegend=False,
+                hoverinfo="skip",
+            )
+            fig.add_trace(current_trace)
+            artists["current_position"] = current_trace
+
     # --- Direction indicator ---
     if show_direction and n_points >= 2:
         idx = int(0.6 * (n_points - 2))
@@ -142,45 +164,21 @@ def plot_orbit(
 
         d = p1 - p0
         d_norm = np.linalg.norm(d)
+        orbit_scale = np.max(np.linalg.norm(r_points, axis=1))
+        arrow_length = np.clip(0.1 * orbit_scale, 100, 5000)
+        ref_length = orbit_state.r_a if orbit_state.r_a is not None else orbit_state.a
 
         if d_norm > 1e-12:
             d_hat = d / d_norm
-            orbit_scale = np.max(np.linalg.norm(r_points, axis=1))
-            arrow_length = 0.1 * orbit_scale
-            p_tip = p0 + arrow_length * d_hat
-
-            # short line
-            dir_line = go.Scatter3d(
-                x=[p0[0], p_tip[0]],
-                y=[p0[1], p_tip[1]],
-                z=[p0[2], p_tip[2]],
-                mode="lines",
-                line=dict(
-                    color=orbit_color,
-                    width=orbit_lw + 1,
-                ),
-                opacity=min(1.0, alpha + 0.1),
-                showlegend=False,
-                hoverinfo="skip",
+            plot_vector(
+                fig,
+                p0,
+                d_hat,
+                scale=arrow_length,
+                color=orbit_color,
+                alpha=0.3,  # very faint
+                ref_length=ref_length,
             )
-            fig.add_trace(dir_line)
 
-            # tip marker
-            dir_tip = go.Scatter3d(
-                x=[p_tip[0]],
-                y=[p_tip[1]],
-                z=[p_tip[2]],
-                mode="markers",
-                marker=dict(
-                    size=4,
-                    color=orbit_color,
-                    opacity=min(1.0, alpha + 0.1),
-                ),
-                showlegend=False,
-                hoverinfo="skip",
-            )
-            fig.add_trace(dir_tip)
-
-            artists["direction"] = (dir_line, dir_tip)
-
+    return artists
     return artists
