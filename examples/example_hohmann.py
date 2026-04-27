@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 
-from orbital_viz.c_hohmann_tr import compute_hohmann_transfer
+from orbital_viz.computations.c_hohmann_tr import compute_hohmann_transfer
 from orbital_viz.constants import deg2rad, mu_earth
 from orbital_viz.orbital_state import OrbitalState
 from orbital_viz.plt.p_deltaVs import plot_delta_v_hohmann
