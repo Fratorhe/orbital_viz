@@ -8,7 +8,7 @@ from orbital_viz.plotly.p_utils import (
 )
 
 
-def plot_position(fig, orbit_state, color="red", size=6, label=None, **kwargs):
+def plot_position(fig, orbit_state, color="red", ref_length=None, label=None, **kwargs):
     """
     Plot the current spacecraft position if theta is available.
     """
@@ -19,14 +19,16 @@ def plot_position(fig, orbit_state, color="red", size=6, label=None, **kwargs):
 
     orbit_state.ensure_state_vectors()
     r_vec = np.asarray(orbit_state.r_vec, dtype=float)
-    ref_length = orbit_state.r_a if orbit_state.r_a is not None else orbit_state.a
+    if ref_length is None:
+        ref_length = orbit_state.r_a if orbit_state.r_a is not None else orbit_state.a
+    size = ref_length * 5e-4
     point = go.Scatter3d(
         x=[r_vec[0]],
         y=[r_vec[1]],
         z=[r_vec[2]],
         mode="markers",
         marker=dict(
-            size=ref_length * 5e-4,
+            size=size,
             color=color,
             line=dict(color="black", width=1),
         ),
